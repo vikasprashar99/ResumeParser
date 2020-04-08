@@ -11,9 +11,8 @@ import zipfile
 import docx2txt
 # pip i pymongo
 import pymongo
-
 import xlwt
-
+# pyton docx
 # let Testfilename
 
 client = pymongo.MongoClient(
@@ -120,7 +119,6 @@ def test(request):
     print(list(records.find()))
     data=list(records.find())
     wb=xlwt.Workbook()
-    wb.set_tab_width(100)
     ws=wb.add_sheet("new sheet")
 
     ws.write(0,0,"Name")
@@ -130,9 +128,9 @@ def test(request):
 
     for i in range(len(data)):
         ws.write(i+1,0,data[i]["name"])
-        ws.write(i+2,1,data[i]["email"])
-        ws.write(i+3,2,data[i]["phone"])
-        ws.write(i+4,3,data[i]["lenimage"])
+        ws.write(i+1,1,data[i]["email"])
+        ws.write(i+1,2,data[i]["phone"])
+        ws.write(i+1,3,data[i]["lenimage"])
 
     wb.save(Testfilename+".xls")
 
