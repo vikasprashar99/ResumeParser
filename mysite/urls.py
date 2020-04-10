@@ -24,6 +24,7 @@ urlpatterns = [
     path('',views.dashboard,name='upload'),
     path('getResumeData',views.getResumeData,name='getResumeData'),
     path('downloadCSV',views.downloadCSV,name='downloadCSV'),
+    # path('finalPage',views.finalPage,name='finalPage'),
 
 ]
 if settings.DEBUG:

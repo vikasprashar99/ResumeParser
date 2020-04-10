@@ -3,9 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Resume Reader</title>
+    <title>Resume Reader Application</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+        .header {
+  padding: 5px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+}
       table {
         font-family: arial, sans-serif;
         border-collapse: collapse;
@@ -33,6 +39,10 @@
       </style>
   </head>
   <body>
+    <div class="header">
+      <h1>          Resume Reader Application
+      </h1>
+    </div>
     <div>
       <div align="center">
         <h1>RESUME DATA</h1>
@@ -41,13 +51,13 @@
       <tr>
         <th>Name</th>
         <th>Email</th>
-        <th>LinkeIN</th>
+        <th>LinkedIN</th>
         <th>Phone_no</th>
         <th>Images</th>
         <th>Tables</th>
         <th>Font Name</th>
         <th>Font Size</th>
-        <th>Total number of Characters</th>
+        <th>Total number of Characters + Lines</th>
       </tr>
       <tr>
         <td>{{Name}}</td>
@@ -65,7 +75,7 @@
 <div align="center">
     <form method="POST" action="downloadCSV" enctype="multipart/form-data">
       {% csrf_token %}
-      <input type="submit" value="Downlaod CSV"  class="button"/>
+      <input type="submit" value="Downlaod CSV"  class="button" style="cursor: pointer;"/>
     </form>
   </div>
   

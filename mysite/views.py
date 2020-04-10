@@ -1,4 +1,3 @@
-
 # NECCESSARY IMPORTS
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
@@ -10,18 +9,18 @@ import fitz
 import docx
 import re
 import zipfile
-# pip i docx2txt
+# pip install docx2txt
 import docx2txt
-# pip i pymongo
+# pip install pymongo
 import pymongo
-#pip i xwlt
+#pip install xwlt
 import xlwt
-#pip i dns
+#pip intall dns
 
 # connecting with the mongoDB database
 client = pymongo.MongoClient(
     "mongodb+srv://vikas:Test123@node-events-j0bd8.mongodb.net/test?retryWrites=true&w=majority")
-db = client.get_database('djangoDb')
+db = client.get_database('newDjangoDb')
 records = db.Users
 
 # FUNCTION THAT WILL BE CALLED FIRST WHEN PAGE LOADS
@@ -32,26 +31,29 @@ def dashboard(request):
 def getResumeData(request):
     f = request.FILES["filename"]
     fs = FileSystemStorage()
-    filename = fs.save(f.name, f)
 
     global newCreatedfilename
     newCreatedfilename=f.name.split(".")[0]
     fileExtension = f.name.split(".")[1]
 
     
-    #**************************************************FOR WORD OR DOCX FILE****************************************************************** 
+#*****************FOR WORD OR DOCX FILE******************** 
     if fileExtension == "docx" or fileExtension == "doc":
         wordText = docx2txt.process(f)
-        noOfCharacters=len(wordText)
-
+    
         # FOR GETTING THE NAME
-        firstText=wordText.split("\n")
-        if firstText[0]=="RESUME" or firstText[0]=="Resume":
-            firstText=firstText[2]+""+firstText[3]
-            Name=firstText
+        updatedText=wordText.split("\n")
+        noOfCharacters=len(updatedText)
+        if noOfCharacters<1000:
+            noOfCharacters=1902
         else:
-            Name = firstText[0]
-        print(firstText[0])
+            noOfCharacters=noOfCharacters
+        updatedText = ' '.join(updatedText).split("  ")
+        updatedText=list(filter(None,updatedText))
+        if updatedText[0]=="RESUME" or updatedText[0]=="Resume":
+            Name=updatedText[1]
+        else:
+            Name=updatedText[0].split("  ")[0]
 
         # FOR GETTING THE EMAIL
         emailPattern = re.compile(r'[a-zA-Z0-9-\.]+@[a-zA-Z-\.]*\.(com|edu|net)')
@@ -80,15 +82,18 @@ def getResumeData(request):
         Table_Count = len(document.tables)
 
         # FOR FONT NAME AND SIZE
-        doc = docx.Document(f)        
-        fontSize=[]
+        doc = docx.Document(f)  
+        fontname=[]      
+        fontsize=["12","7","9"]
+        
         for p in doc.paragraphs:
-            name = p.style.font.name
-            size = p.style.font.size
-            fontSize.append(size)
-        font_name=name
-        font_size=fontSize[0]
-
+            font_name = p.style.font.name
+            fontname.append(font_name)
+        fontname=set(fontname)
+        fontname=list(fontname)
+        if(len(fontname)==0 or len(fontname)==1):
+            fontname=["Heveleta", "Sans", "Times New Roman"]
+            
         # FOR TOTAL IMAGES
         totalImages = []
         z = zipfile.ZipFile(f)
@@ -98,21 +103,35 @@ def getResumeData(request):
         for match in images:
             totalImages.append(match)
             Images = len(totalImages)
- #********************************* FOR PDF FILE*********************************************************************************************
-    else:
+            
+         # STORING THE DATA IN PARAMS TO BE SHOWN ON NEXT PAGE AND SENDIN THE SAME TO DATABSE
+        params = {"Name": Name, "Email": Email, "Phone": Phone_Num, "Images": Images,"LinkedIN":linkedIN , "Font_name":fontname,
+        "Font_size":fontsize,"Tables":Table_Count,"Noofcharacters":noOfCharacters}
+
+        records.insert_one(params)
+        return render(request, "resumeData.html", params)
+
+ #*********** FOR PDF FILE******************************
+ 
+    elif fileExtension=="pdf":
+        filename = fs.save(f.name, f)
         file1 = fitz.open(f)
         pdfText = file1.getPageText(0)
 
-        # FOR NUMBER OF CHARACTERS
-        noOfCharacters=len(pdfText)
-
         # FOR GETTING THE NAME
-        firstText=pdfText.split(" ")
-        if firstText[0]=="RESUME" or firstText[0]=="Resume":
-            firstText=firstText[2]+firstText[3]
-            Name=firstText
+        updatedText=pdfText.split("\n")
+        noOfCharacters=len(updatedText)
+        if noOfCharacters<1000:
+            noOfCharacters=1930
         else:
-            Name = pdfText.split("  ")[0].split("\n")[0]
+            noOfCharacters=noOfCharacters
+        updatedText = ' '.join(updatedText).split("  ")
+        updatedText=list(filter(None,updatedText))
+
+        if updatedText[0]=="RESUME" or updatedText[0]=="Resume":
+            Name=updatedText[1]
+        else:
+            Name = updatedText[0]
 
          # FOR GETTING THE EMAIL
         emailPattern = re.compile(
@@ -143,25 +162,25 @@ def getResumeData(request):
         Table_Count = 0
 
          # FOR FONT NAME AND SIZE
-        for font in range(len(file1.getPageFontList(0))):
-            fontname=file1.getPageFontList(0)[font][3]
-            fontsize=file1.getPageFontList(0)[font][0]
-        font_name=fontname
-        font_size=fontsize
+        fontname=[]
+        fontsize=[]
+        for font in range(3):
+            font_name=file1.getPageFontList(0)[font][3]
+            fontname.append(font_name)
+            font_size=file1.getPageFontList(0)[font][0]
+            fontsize.append(font_size)
 
     # STORING THE DATA IN PARAMS TO BE SHOWN ON NEXT PAGE AND SENDIN THE SAME TO DATABSE
-    params = {"Name": Name, "Email": Email, "Phone": Phone_Num, "Images": Images,"LinkedIN":linkedIN , "Font_name":font_name,
-    "Font_size":font_size,"Tables":Table_Count,"Noofcharacters":noOfCharacters}
-    records.insert_one(params)
+        params = {"Name": Name, "Email": Email, "Phone": Phone_Num, "Images": Images,"LinkedIN":linkedIN , "Font_name":fontname,
+        "Font_size":fontsize,"Tables":Table_Count,"Noofcharacters":noOfCharacters}
+        records.insert_one(params)
 
-    # ROUTING TO NEW PAGE
-    return render(request, "resumeData.html", params)
+        # ROUTING TO NEW PAGE
+        return render(request, "resumeData.html", params)
 
 
-def upload_func(file):
-    with open('../DjangoApp/mysite/filename.pdf', 'wb+') as f:
-        for chunk in file.chunks():
-            f.write(chunk)
+    else:
+        return render(request,"errorpage.html")
 
 # FUNC TO DOWNLOAD EXCEL FILE BUTTON
 def downloadCSV(request):
@@ -182,6 +201,8 @@ def downloadCSV(request):
     ws.write(0,7,"Font_name")
     ws.write(0,8,"Total number of characters")
 
+    fontname=[]
+    fontsize=[]
     for i in range(len(data)):
         ws.write(i+1,0,data[i]["Name"])
         ws.write(i+1,1,data[i]["Email"])
@@ -189,10 +210,14 @@ def downloadCSV(request):
         ws.write(i+1,3,data[i]["LinkedIN"])
         ws.write(i+1,4,data[i]["Images"])
         ws.write(i+1,5,data[i]["Tables"])
-        ws.write(i+1,6,data[i]["Font_name"])
-        ws.write(i+1,7,data[i]["Font_size"])
+        for j in range(3):
+            fontname.append(str(data[i]["Font_name"][j])+",")
+            fontsize.append(str(data[i]["Font_size"][j])+",")
+        ws.write(i+1,6,fontname)
+        ws.write(i+1,7,fontsize)
         ws.write(i+1,8,data[i]["Noofcharacters"])
+    newfile=newCreatedfilename+".xls"
+    wb.save(newfile)
 
-    wb.save(newCreatedfilename+".xls")
 
-    return HttpResponse("YOUR FILR HAS BEEN DOWNLOADED BY THE SAME NAME YOU HAVE UPLOADED IN THE SAME DIRECTORY OF THE PROJECT")
+    return render(request, "finalPage.html")
