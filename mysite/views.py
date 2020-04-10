@@ -194,7 +194,7 @@ def downloadCSV(request):
     ws.write(0,5,"Images")
     ws.write(0,6,"Font_size")
     ws.write(0,7,"Font_name")
-    ws.write(0,8,"Total number of characters")
+    ws.write(0,8,"Total number of characters + lines")
 
     fontname=[]
     fontsize=[]
