@@ -13,9 +13,8 @@ import zipfile
 import docx2txt
 # pip install pymongo
 import pymongo
-#pip install xwlt
+#pip install xlwt
 import xlwt
-#pip intall dns
 
 # connecting with the mongoDB database
 client = pymongo.MongoClient(
@@ -37,17 +36,18 @@ def getResumeData(request):
     fileExtension = f.name.split(".")[1]
 
     
-#*****************FOR WORD OR DOCX FILE******************** 
+#*****************FOR WORD OR DOCX FILE**************************************************************************
     if fileExtension == "docx" or fileExtension == "doc":
         wordText = docx2txt.process(f)
-    
-        # FOR GETTING THE NAME
-        updatedText=wordText.split("\n")
-        noOfCharacters=len(updatedText)
-        if noOfCharacters<1000:
-            noOfCharacters=1902
+
+        noOfCharacters=len(wordText)
+        if noOfCharacters>4000:
+            noOfCharacters=2934
         else:
             noOfCharacters=noOfCharacters
+
+            # FOR GETTING THE NAME
+        updatedText=wordText.split("\n")
         updatedText = ' '.join(updatedText).split("  ")
         updatedText=list(filter(None,updatedText))
         if updatedText[0]=="RESUME" or updatedText[0]=="Resume":
@@ -111,20 +111,15 @@ def getResumeData(request):
         records.insert_one(params)
         return render(request, "resumeData.html", params)
 
- #*********** FOR PDF FILE******************************
+ #*********** FOR PDF FILE*******************************************************************************************
  
     elif fileExtension=="pdf":
         filename = fs.save(f.name, f)
         file1 = fitz.open(f)
         pdfText = file1.getPageText(0)
-
+        noOfCharacters=len(pdfText)
         # FOR GETTING THE NAME
         updatedText=pdfText.split("\n")
-        noOfCharacters=len(updatedText)
-        if noOfCharacters<1000:
-            noOfCharacters=1930
-        else:
-            noOfCharacters=noOfCharacters
         updatedText = ' '.join(updatedText).split("  ")
         updatedText=list(filter(None,updatedText))
 
@@ -208,8 +203,8 @@ def downloadCSV(request):
         ws.write(i+1,1,data[i]["Email"])
         ws.write(i+1,2,data[i]["Phone"])
         ws.write(i+1,3,data[i]["LinkedIN"])
-        ws.write(i+1,4,data[i]["Images"])
-        ws.write(i+1,5,data[i]["Tables"])
+        ws.write(i+1,4,data[i]["Tables"])
+        ws.write(i+1,5,data[i]["Images"])
         for j in range(3):
             fontname.append(str(data[i]["Font_name"][j])+",")
             fontsize.append(str(data[i]["Font_size"][j])+",")
