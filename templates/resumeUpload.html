@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Resume Reader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    .header {
+  padding: 5px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+}
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+.button2 {
+  background-color: #008CBA;  border: none;
+  color: white;
+  padding: 15px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+  </style>
+  </head>
+  <body>
+    
+<div class="header">
+  <h1>          Resume Reader
+  </h1>
+</div>
+    <div>
+      <div>
+     
+      </div>
+      <div align="center">
+        <h2 >
+          PLEASE UPLOAD YOUR RESUME(PDF/DOCX ONLY)
+        </h2>
+        <form
+          action="getResumeData"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          {% csrf_token %}
+          <input type="file" id="myFile" name="filename" class="button2" value="Select a resume" required/>
+          <input type="submit" value="Upload Image" class="button"/>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

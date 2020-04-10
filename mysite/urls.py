@@ -20,10 +20,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    # ALL ROUTING PATHS ARE SPECIFIED HERE
     path('',views.dashboard,name='upload'),
-    path('getImage',views.getImage,name='getImage'),
-        path('test',views.test,name='test'),
+    path('getResumeData',views.getResumeData,name='getResumeData'),
+    path('downloadCSV',views.downloadCSV,name='downloadCSV'),
 
 ]
 if settings.DEBUG:

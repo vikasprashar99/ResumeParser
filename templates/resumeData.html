@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Resume Reader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+      .button {
+        background-color: #555555;         color: black;  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+      </style>
+  </head>
+  <body>
+    <div>
+      <div align="center">
+        <h1>RESUME DATA</h1>
+      </div>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>LinkeIN</th>
+        <th>Phone_no</th>
+        <th>Images</th>
+        <th>Tables</th>
+        <th>Font Name</th>
+        <th>Font Size</th>
+        <th>Total number of Characters</th>
+      </tr>
+      <tr>
+        <td>{{Name}}</td>
+        <td>{{Email}}</td>
+        <td>{{LinkedIN}}</td>
+        <td>{{Phone}}</td>
+        <td>{{Images}}</td>
+        <td>{{Tables}}</td>
+        <td>{{Font_name}}</td>
+        <td>{{Font_size}}</td>
+        <td>{{Noofcharacters}}</td>
+
+      </tr>
+      </table><br><br>
+<div align="center">
+    <form method="POST" action="downloadCSV" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="submit" value="Downlaod CSV"  class="button"/>
+    </form>
+  </div>
+  
+  </div>
+  </body>
+</html>
