@@ -1,4 +1,4 @@
-# ResumeParser in Python for PDF AND DOC FILES
+# Resume Reader in Python for PDF AND DOC FILES
 
 Install Python First
 Install Django in the system by command pip install Django.
