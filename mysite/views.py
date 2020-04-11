@@ -50,7 +50,7 @@ def getResumeData(request):
         updatedText=wordText.split("\n")
         updatedText = ' '.join(updatedText).split("  ")
         updatedText=list(filter(None,updatedText))
-        if updatedText[0]=="RESUME" or updatedText[0]=="Resume":
+        if updatedText[0]=="RESUME" or updatedText[0]=="Resume" or updatedText[0]=="NAME" or updatedText[0]=="Name":
             Name=updatedText[1]
         else:
             Name=updatedText[0].split("  ")[0]
@@ -194,7 +194,7 @@ def downloadCSV(request):
     ws.write(0,5,"Images")
     ws.write(0,6,"Font_size")
     ws.write(0,7,"Font_name")
-    ws.write(0,8,"Total number of characters")
+    ws.write(0,8,"Total number of characters + Lines")
 
     fontname=[]
     fontsize=[]
