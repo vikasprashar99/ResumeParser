@@ -17,8 +17,7 @@ import pymongo
 import xlwt
 
 # connecting with the mongoDB database
-client = pymongo.MongoClient(
-    "mongodb+srv://vikas:Test123@node-events-j0bd8.mongodb.net/test?retryWrites=true&w=majority")
+
 db = client.get_database('newDjangoDb')
 records = db.Users
 
